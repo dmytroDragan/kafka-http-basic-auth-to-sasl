@@ -1,0 +1,25 @@
+// Server config - used to authorise
+KafkaClient{
+   org.apache.kafka.common.security.plain.PlainLoginModule optional
+   username="producer2"
+   password="producer-secret2";
+
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="admin"
+   password="admin-secret";
+};
+
+// Client config user to connect to Zookeeper
+Client {
+  org.apache.zookeeper.server.auth.DigestLoginModule required
+  username="admin"
+  password="admin-secret";
+};
+
+KafkaRest {
+    org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required
+    debug="true"
+    file="/opt/security/password.properties";
+};
+
+

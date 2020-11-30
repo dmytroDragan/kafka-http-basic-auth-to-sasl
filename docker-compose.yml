@@ -1,0 +1,149 @@
+# Basic authorization with SASL (Plaintext to Kafka and DigestMD5 to Zookeeper)
+---
+version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.0.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: "-Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider -Djava.security.auth.login.config=/opt/security/zookeeper-server.jaas"
+    volumes:
+      - ./security:/opt/security
+
+  kafka:
+    image: confluentinc/cp-server:6.0.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: "SASL_SSL://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "SASL_SSL://kafka:9092"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_ENDPOINT_INDETIFICATION_ALGORITHM: HTTPS
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_SUPER_USERS: "User:admin;User:producer2"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_SSL_CLIENT_AUTH: requested
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker1.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: broker1_keystore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: broker1_sslkey_creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.broker1.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: broker1_truststore_creds
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/security/kafka-server.jaas"
+      KAFKA_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+    volumes:
+      - ./security:/opt/security
+      - ./security:/etc/kafka/secrets
+
+  kafka-2:
+    image: confluentinc/cp-server:6.0.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: "SASL_SSL://kafka-2:9093"
+      KAFKA_ADVERTISED_LISTENERS: "SASL_SSL://kafka-2:9093"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      #kafka_confluent_license_topic_replication_factor
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_ENDPOINT_INDETIFICATION_ALGORITHM: HTTPS
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_SUPER_USERS: "User:admin;User:producer2"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_SSL_CLIENT_AUTH: requested
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker2.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: broker2_keystore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: broker2_sslkey_creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.broker2.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: broker2_truststore_creds
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/security/kafka-server.jaas"
+      KAFKA_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+    volumes:
+      - ./security:/opt/security
+      - ./security:/etc/kafka/secrets
+
+  kafka-3:
+    image: confluentinc/cp-server:6.0.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: "SASL_SSL://kafka-3:9093"
+      KAFKA_ADVERTISED_LISTENERS: "SASL_SSL://kafka-3:9093"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      #kafka_confluent_license_topic_replication_factor
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_ENDPOINT_INDETIFICATION_ALGORITHM: HTTPS
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_SUPER_USERS: "User:admin;User:producer2"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_SSL_CLIENT_AUTH: requested
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker3.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: broker3_keystore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: broker3_sslkey_creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.broker3.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: broker3_truststore_creds
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/security/kafka-server.jaas"
+      KAFKA_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+    volumes:
+      - ./security:/opt/security
+      - ./security:/etc/kafka/secrets
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:6.0.0
+    hostname: kafka-rest-proxy
+    depends_on:
+      - zookeeper
+      - kafka-2
+    ports:
+      - "18082:18082"
+    environment:
+      KAFKA_REST_LISTENERS: "http://0.0.0.0:18082"
+      KAFKA_REST_HOST_NAME: kafka-rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: SASL_SSL://kafka-2:9093,SASL_SSL://kafka:9092
+      KAFKA_REST_CLIENT_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_REST_CLIENT_SASL_MECHANISM: PLAIN
+      KAFKA_REST_CLIENT_SSL_TRUSTSTORE_LOCATION: /opt/security/kafka.broker3.truststore.jks
+      KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD: confluent
+      KAFKA_REST_CLIENT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/security/rest-server.jaas"
+      KAFKAREST_OPTS: "-Djava.security.auth.login.config=/opt/security/rest-server.jaas"
+      KAFKA_REST_LOG4J_ROOT_LOGLEVEL: TRACE
+      KAFKAREST_LOG4J_ROOT_LOGLEVEL: TRACE
+      KAFKA_REST_TOOLS_LOG4J_LOGLEVEL: TRACE
+      KAFKAREST_TOOLS_LOG4J_LOGLEVEL: TRACE
+      KAFKA_LOG4J_ROOT_LOGLEVEL: TRACE
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: TRACE
+      KAFKA_TOOLS_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+      KAFKA_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+      KAFKA_REST_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+      KAFKAREST_LOG4J_LOGGERS: "io.confluent.admin=TRACE,org.apache.kafka=TRACE,org.apache.kafka.common=TRACE,kafka.authorizer.logger=TRACE"
+    volumes:
+      - ./security:/opt/security
+      - ./security:/etc/kafka/secrets
