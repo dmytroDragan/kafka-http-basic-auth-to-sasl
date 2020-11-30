@@ -132,6 +132,11 @@ services:
       KAFKA_REST_CLIENT_SSL_TRUSTSTORE_LOCATION: /opt/security/kafka.broker3.truststore.jks
       KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD: confluent
       KAFKA_REST_CLIENT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_REST_AUTHENTICATION_METHOD: BASIC
+      KAFKA_REST_AUTHENTICATION_REALM: KafkaRest
+      KAFKA_REST_AUTHENTICATION_ROLES: thisismyrole
+      KAFKA_REST_CONFLUENT_REST_AUTH_PROPAGATE_METHOD: JETTY_AUTH
+      KAFKA_REST_KAFKA_REST_RESOURCE_EXTENSION_CLASS: io.confluent.kafkarest.security.KafkaRestSecurityResourceExtension
       KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/security/rest-server.jaas"
       KAFKAREST_OPTS: "-Djava.security.auth.login.config=/opt/security/rest-server.jaas"
       KAFKA_REST_LOG4J_ROOT_LOGLEVEL: TRACE
